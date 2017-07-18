@@ -504,7 +504,7 @@ Crypto.prototype.setDeviceVerification = function(userId, deviceId, verified,
  *
  * @return {Object.<string, {deviceIdKey: string, sessions: object[]}>}
  */
-Crypto.prototype.getOlmSessionsForUser = function(userId) {
+Crypto.prototype.getOlmSessionsForUser = async function(userId) {
     const devices = this.getStoredDevicesForUser(userId) || [];
     const result = {};
     for (let j = 0; j < devices.length; ++j) {
