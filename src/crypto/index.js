@@ -723,17 +723,20 @@ Crypto.prototype.exportRoomKeys = function() {
  * Import a list of room keys previously exported by exportRoomKeys
  *
  * @param {Object[]} keys a list of session export objects
+ * @return {module:client.Promise} a promise which resolves once the keys have been imported
  */
 Crypto.prototype.importRoomKeys = function(keys) {
-    keys.map((session) => {
-        if (!session.room_id || !session.algorithm) {
-            console.warn("ignoring session entry with missing fields", session);
-            return;
-        }
+    return Promise.map(
+        keys, (session) => {
+            if (!session.room_id || !session.algorithm) {
+                console.warn("ignoring session entry with missing fields", session);
+                return;
+            }
 
-        const alg = this._getRoomDecryptor(session.room_id, session.algorithm);
-        alg.importRoomKey(session);
-    });
+            const alg = this._getRoomDecryptor(session.room_id, session.algorithm);
+            alg.importRoomKey(session);
+        },
+    );
 };
 
 /**
