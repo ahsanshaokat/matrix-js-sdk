@@ -517,16 +517,17 @@ MatrixClient.prototype.setDeviceKnown = function(userId, deviceId, known) {
     return _setDeviceVerification(this, userId, deviceId, null, null, known);
 };
 
-async function _setDeviceVerification(
+function _setDeviceVerification(
     client, userId, deviceId, verified, blocked, known,
 ) {
     if (!client._crypto) {
         throw new Error("End-to-End encryption disabled");
     }
-    const dev = client._crypto.setDeviceVerification(
+    return client._crypto.setDeviceVerification(
         userId, deviceId, verified, blocked, known,
-    );
-    client.emit("deviceVerificationChanged", userId, deviceId, dev);
+    ).then((dev) => {
+        client.emit("deviceVerificationChanged", userId, deviceId, dev);
+    });
 }
 
 /**
