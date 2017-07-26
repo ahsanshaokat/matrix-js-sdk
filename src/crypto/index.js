@@ -1079,6 +1079,13 @@ Crypto.prototype._processReceivedRoomKeyRequests = async function() {
         const cancellations = this._receivedRoomKeyRequestCancellations;
         this._receivedRoomKeyRequestCancellations = [];
 
+        // Process all of the requests, *then* all of the cancellations.
+        //
+        // This makes sure that if we get a request and its cancellation in the
+        // same /sync result, then we process the request before the
+        // cancellation (and end up with a cancelled request), rather than the
+        // cancellation before the request (and end up with an outstanding
+        // request which should have been cancelled.)
         await Promise.map(
             requests, (req) =>
                 this._processReceivedRoomKeyRequest(req),
