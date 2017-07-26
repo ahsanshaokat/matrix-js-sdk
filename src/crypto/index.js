@@ -376,7 +376,7 @@ function _maybeUploadOneTimeKeys(crypto) {
 }
 
 // returns a promise which resolves to the response
-function _uploadOneTimeKeys(crypto) {
+async function _uploadOneTimeKeys(crypto) {
     const oneTimeKeys = crypto._olmDevice.getOneTimeKeys();
     const oneTimeJson = {};
 
@@ -392,18 +392,18 @@ function _uploadOneTimeKeys(crypto) {
         }
     }
 
-    return Promise.all(promises).then(() => {
-        return crypto._baseApis.uploadKeysRequest({
-            one_time_keys: oneTimeJson,
-        }, {
-            // for now, we set the device id explicitly, as we may not be using the
-            // same one as used in login.
-            device_id: crypto._deviceId,
-        });
-    }).then(function(res) {
-        crypto._olmDevice.markKeysAsPublished();
-        return res;
+    await Promise.all(promises);
+
+    const res = await crypto._baseApis.uploadKeysRequest({
+        one_time_keys: oneTimeJson,
+    }, {
+        // for now, we set the device id explicitly, as we may not be using the
+        // same one as used in login.
+        device_id: crypto._deviceId,
     });
+
+    crypto._olmDevice.markKeysAsPublished();
+    return res;
 }
 
 /**
