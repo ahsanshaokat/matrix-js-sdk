@@ -510,7 +510,7 @@ Crypto.prototype.setDeviceVerification = async function(
  *
  * @param {string} userId id of user to inspect
  *
- * @return {Object.<string, {deviceIdKey: string, sessions: object[]}>}
+ * @return {Promise<Object.<string, {deviceIdKey: string, sessions: object[]}>>}
  */
 Crypto.prototype.getOlmSessionsForUser = async function(userId) {
     const devices = this.getStoredDevicesForUser(userId) || [];
